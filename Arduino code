@@ -1,0 +1,191 @@
+#include <Servo.h>
+Servo myservo;
+int Echo = 10;
+int Trig = 12;
+int flame_detected;
+int servopin = 3;
+int level;
+const int analog_0=A0;
+int l1=6;
+int l2=5;
+#define IN1 7
+#define IN2 8
+#define IN3 9
+#define IN4 13
+#define flamesensor_Forward  11      //forward sensor
+#define flamesensor_Right 4         // right sensor
+#define flamesensor_Left 2      // left sensor
+#define carSpeed 150
+long duration;
+int flamesensor = flamesensor_Forward and flamesensor_Left  and flamesensor_Right ;
+int distance;
+int wheel_direction;
+
+void forward() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  Serial.println("Forward");
+}
+void back() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  Serial.println("Back");
+}
+void left() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  Serial.println("Left");
+}
+void right() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  Serial.println("Right");
+}
+
+void stop() {
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  Serial.println("Stop!");
+}
+
+
+ 
+
+void setup() {
+     myservo.attach(servopin);
+  myservo.write( servopin);
+  Serial.begin(9600);
+  pinMode(flamesensor_Left, INPUT);
+  pinMode(flamesensor_Right, INPUT);
+  pinMode(flamesensor_Forward, INPUT);
+  pinMode(Echo, INPUT);
+  pinMode(Trig, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+pinMode(l1,OUTPUT);
+  pinMode(l2,OUTPUT);
+
+  stop();
+  }
+
+
+
+void loop() {
+ 
+ digitalWrite(Trig, LOW);
+      delayMicroseconds(2);
+      digitalWrite(Trig, HIGH);
+      delayMicroseconds(20);
+       digitalWrite(Trig,LOW);
+      duration = pulseIn(Echo, HIGH);
+      distance = duration *(0.034 / 2);
+      Serial.println(distance);
+  {
+
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    Serial.println("Forward");
+    delayMicroseconds(100 );
+ 
+  }
+  flame_detected  = digitalRead(flamesensor );
+  {
+    myservo.write(90);
+    delayMicroseconds(500 );
+
+
+    if (digitalRead(flamesensor_Forward) == LOW)
+    {
+      myservo.write(90);
+      delayMicroseconds(5000);
+
+ 
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, LOW);
+      digitalWrite(IN3, LOW);
+      digitalWrite(IN4, LOW);
+      Serial.println("Stop!");
+      delayMicroseconds(5000);
+    }
+   
+    if (digitalRead(flamesensor_Right) == LOW)
+    {
+      myservo.write(180);
+      delayMicroseconds(5000);
+
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, LOW);
+      digitalWrite(IN3, LOW);
+      digitalWrite(IN4, LOW);
+      Serial.println("Stop!");
+      delayMicroseconds(5000);
+    }
+   
+    if (digitalRead(flamesensor_Left) == LOW)
+    {
+      myservo.write(0);
+      delayMicroseconds(5000);
+
+
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, LOW);
+      digitalWrite(IN3, LOW);
+      digitalWrite(IN4, LOW);
+      Serial.println("Stop!");
+      delayMicroseconds(5000);
+    }
+ 
+       
+
+      if (distance <= 15){
+      {
+
+        digitalWrite(IN1, LOW);
+        digitalWrite(IN2, LOW);
+        digitalWrite(IN3, LOW);
+        digitalWrite(IN4, LOW);
+        Serial.println("Stop!");
+        delayMicroseconds(5000);
+      }
+      {
+     
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  Serial.println("Back");
+  delayMicroseconds(2000);
+      }  
+      }
+      delay(2000);
+      level=analogRead(analog_0);
+Serial.println(level);
+if(level<=420)
+{ digitalWrite(l1, HIGH);
+  digitalWrite(l2, LOW);
+  Serial.println("Low");
+}
+else if(level>420)
+ {
+  digitalWrite(l1, LOW);
+  digitalWrite(l2, HIGH);
+  Serial.println("High");
+ }
+ 
+      }  
+}
